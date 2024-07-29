@@ -26,3 +26,5 @@
   `node index.js -a add -n Mango -e mango@gmail.com -p 322-22-22`
   #### Remove contact
   `node index.js -a remove -i qdggE76Jtbfd9eWJHrssH`
+  #### Update contact
+  `node index.js -a update -i 05olLMgyVQdWRwgKfg5J6 -n Mango -e mango@gmail.com -p 322-22-22`
