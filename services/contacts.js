@@ -34,9 +34,25 @@ async function addContact(data) {
     return newContact;
 }
 
+async function updateContact(contactId, data) {
+    const contacts = await listContacts();
+    const index = contacts.findIndex(el => el.id == contactId);
+    if (index === -1) {
+        return null;
+    }
+    contacts[index] = {
+        ...contacts[index],
+        ...data
+    }
+    repository.update(contacts);
+
+    return newContact;
+}
+
 module.exports = {
     listContacts,
     getContactById,
     removeContact,
-    addContact
+    addContact,
+    updateContact
 }

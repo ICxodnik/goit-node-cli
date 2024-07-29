@@ -31,6 +31,8 @@ async function invokeAction({ action, id, ...data }) {
       return await contactService.removeContact(id);
     case "add":
       return await contactService.addContact(data);
+    case "update":
+      return await contactService.updateContact(id, data);
     default:
       return ("\x1B[31m Unknown action type!");
   }
