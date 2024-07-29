@@ -1,58 +1,76 @@
-const xid = require('xid-js');
-const repository = require('../repositories/json/contacts');
+class ContactService {
+    #repository;
 
-async function listContacts() {
-    return await repository.read();
-}
-
-async function getContactById(contactId) {
-    const contacts = await listContacts();
-    return contacts.find(el => el.id == contactId) || null;
-}
-
-async function removeContact(contactId) {
-    const contacts = await listContacts();
-    const index = contacts.findIndex(el => el.id == contactId);
-    if (index == -1) {
-        return null;
+    constructor(repository) {
+        this.#repository = repository;
     }
-    const [deleted] = contacts.splice(index, 1);
-    repository.update(contacts);
-
-    return deleted;
-}
-
-async function addContact(data) {
-    const contacts = await listContacts();
-    const newContact = {
-        id: xid.next(),
-        ...data
+    async listContacts() {
+        return await this.#repository.getItems();
     }
-    contacts.push(newContact);
-    repository.update(contacts);
 
-    return newContact;
-}
-
-async function updateContact(contactId, data) {
-    const contacts = await listContacts();
-    const index = contacts.findIndex(el => el.id == contactId);
-    if (index === -1) {
-        return null;
+    async getContactById(contactId) {
+        const contact = await this.#repository.getItemById(contactId);
+        return contact || null;
     }
-    contacts[index] = {
-        ...contacts[index],
-        ...data
-    }
-    repository.update(contacts);
 
-    return newContact;
+    async removeContact(contactId) {
+        const contact = await this.#repository.deleteItem(contactId);
+        return contact || null;
+    }
+
+    async addContact(data) {
+        if (!(data.name && data.email && data.phone)) { return "Insert all necessary fields"; }
+        if (!this.#isNameValid(data.name)) { return "Name is not valid"; }
+        if (!this.#isEmailValid(data.email)) { return "Email is not valid"; }
+        if (!this.#isPhoneValid(data.phone)) { return "Phone is not valid"; }
+
+        const newContact = {
+            ...data
+        }
+        await this.#repository.addItem(newContact)
+        return newContact;
+    }
+
+    async updateContact(contactId, data) {
+        if (!contactId) { return "Id cannot be empty"; }
+        if (data.name && !this.#isNameValid(data.name)) { return "Name is not valid"; }
+        if (data.email && !this.#isEmailValid(data.email)) { return "Email is not valid"; }
+        if (data.phone && !this.#isPhoneValid(data.phone)) { return "Phone is not valid"; }
+
+        let contact = await this.#repository.getItemById(contactId);
+        if (!contact) { return null; }
+
+        contact = {
+            ...contact,
+            ...data
+        }
+        await this.#repository.updateItem(contact);
+
+        return contact;
+    }
+
+    #isNameValid(data) {
+        if (/^[A-Za-z ]+$/.test(data)) {
+            return true;
+        }
+        return false;
+    }
+
+    #isEmailValid(data) {
+        if (/\S+@\S+\.\S+/.test(data)) {
+            return true;
+        }
+        return false;
+    }
+
+    #isPhoneValid(data) {
+        if (/[0-9+() \-.]/g.test(data)) {
+            return true;
+        }
+        return false;
+    }
 }
 
 module.exports = {
-    listContacts,
-    getContactById,
-    removeContact,
-    addContact,
-    updateContact
+    ContactService
 }
