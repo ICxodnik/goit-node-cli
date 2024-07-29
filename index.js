@@ -9,16 +9,13 @@ program
 
 program.parse();
 const options = program.opts();
-start();
+start().catch(err => {
+  console.error('There was an error reading the file! \n', err);
+});
 
 async function start() {
-  try {
-    let result = await invokeAction(options);
-    console.log(result);
-  }
-  catch (err) {
-    console.error('There was an error reading the file!', err);
-  }
+  let result = await invokeAction(options);
+  console.log(result);
 }
 
 async function invokeAction({ action, id, ...data }) {
