@@ -1,20 +1,8 @@
-const fs = require('fs').promises;
-const path = require('path');
 const xid = require('xid-js');
-
-const contactsPath = path.join(__dirname, "db", "contacts.json");
-
-async function update(data) {
-    fs.writeFile(contactsPath, JSON.stringify(data, null, 2),
-        {
-            encoding: "utf8",
-            flag: "w"
-        });
-}
+const repository = require('../repositories/json/contacts');
 
 async function listContacts() {
-    let result = await fs.readFile(contactsPath, 'utf8')
-    return JSON.parse(result);
+    return await repository.read();
 }
 
 async function getContactById(contactId) {
@@ -25,9 +13,11 @@ async function getContactById(contactId) {
 async function removeContact(contactId) {
     const contacts = await listContacts();
     const index = contacts.findIndex(el => el.id == contactId);
-    if (index == -1) { return null; }
+    if (index == -1) {
+        return null;
+    }
     const [deleted] = contacts.splice(index, 1);
-    update(contacts);
+    repository.update(contacts);
 
     return deleted;
 }
@@ -39,7 +29,7 @@ async function addContact(data) {
         ...data
     }
     contacts.push(newContact);
-    update(contacts);
+    repository.update(contacts);
 
     return newContact;
 }
