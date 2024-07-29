@@ -22,7 +22,7 @@ start().catch(err => {
 
 async function start() {
     let result = await invokeAction(options);
-    console.log(result);
+    console.table(result);
 }
 
 async function invokeAction({ action, id, ...data }) {
