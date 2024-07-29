@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs').promises;
 
-const contactsPath = path.join(__dirname, "db", "contacts.json");
+const contactsPath = path.join(__dirname, "..", "db", "contacts.json");
 
 async function update(data) {
     fs.writeFile(contactsPath, JSON.stringify(data, null, 2),
