@@ -27,8 +27,7 @@ class ContactService {
         const newContact = {
             ...data
         }
-        await this.#repository.addItem(newContact)
-        return newContact;
+        return await this.#repository.addItem(newContact) || null;
     }
 
     async updateContact(contactId, data) {
@@ -44,9 +43,8 @@ class ContactService {
             ...contact,
             ...data
         }
-        await this.#repository.updateItem(contact);
 
-        return contact;
+        return await this.#repository.updateItem(contact) || null;
     }
 
     #isNameValid(data) {
