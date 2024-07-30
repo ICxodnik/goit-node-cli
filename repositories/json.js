@@ -45,7 +45,7 @@ class FileDbRepository {
 
     async updateItem(newItem) {
         const items = await this.getItems();
-        const index = items.findIndex(el => el.id == newItem.itemId);
+        const index = items.findIndex(el => el.id == newItem.id);
         if (index == -1) {
             return null;
         }
