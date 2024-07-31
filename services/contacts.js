@@ -1,3 +1,5 @@
+const { isNameValid, isEmailValid, isPhoneValid } = require("../helpers/validators");
+
 class ContactService {
     #repository;
 
@@ -20,9 +22,9 @@ class ContactService {
 
     async addContact(data) {
         if (!(data.name && data.email && data.phone)) { return "Insert all necessary fields"; }
-        if (!this.#isNameValid(data.name)) { return "Name is not valid"; }
-        if (!this.#isEmailValid(data.email)) { return "Email is not valid"; }
-        if (!this.#isPhoneValid(data.phone)) { return "Phone is not valid"; }
+        if (!isNameValid(data.name)) { return "Name is not valid"; }
+        if (!isEmailValid(data.email)) { return "Email is not valid"; }
+        if (!isPhoneValid(data.phone)) { return "Phone is not valid"; }
 
         const newContact = {
             ...data
@@ -32,9 +34,9 @@ class ContactService {
 
     async updateContact(contactId, data) {
         if (!contactId) { return "Id cannot be empty"; }
-        if (data.name && !this.#isNameValid(data.name)) { return "Name is not valid"; }
-        if (data.email && !this.#isEmailValid(data.email)) { return "Email is not valid"; }
-        if (data.phone && !this.#isPhoneValid(data.phone)) { return "Phone is not valid"; }
+        if (data.name && !isNameValid(data.name)) { return "Name is not valid"; }
+        if (data.email && !isEmailValid(data.email)) { return "Email is not valid"; }
+        if (data.phone && !isPhoneValid(data.phone)) { return "Phone is not valid"; }
 
         let contact = await this.#repository.getItemById(contactId);
         if (!contact) { return null; }
@@ -45,27 +47,6 @@ class ContactService {
         }
 
         return await this.#repository.updateItem(contact) || null;
-    }
-
-    #isNameValid(data) {
-        if (/^[A-Za-z ]+$/.test(data)) {
-            return true;
-        }
-        return false;
-    }
-
-    #isEmailValid(data) {
-        if (/\S+@\S+\.\S+/.test(data)) {
-            return true;
-        }
-        return false;
-    }
-
-    #isPhoneValid(data) {
-        if (/[0-9+() \-.]/g.test(data)) {
-            return true;
-        }
-        return false;
     }
 }
 
