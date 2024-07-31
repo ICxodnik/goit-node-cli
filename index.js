@@ -1,6 +1,6 @@
 const { program } = require('commander');
 const { ContactService } = require('./services/contacts');
-const { FileDbRepository } = require('./repositories/json');
+const { FileDbRepository } = require('./repositories/fileDbRepository');
 const path = require('path');
 
 program
